@@ -4,8 +4,9 @@ var Enemy = function(x,y,speed) {
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    this.speed = speed;
-    this.move();
+    this.speed = function getRandom() {
+        return (Math.random())*200;
+    }();
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -13,7 +14,7 @@ var Enemy = function(x,y,speed) {
 
 // Enemy move function
 Enemy.prototype.move = function(){
-    this.x+100;
+    this.x+this.speed;
 };
 
 // Update the enemy's position, required method for game
@@ -22,6 +23,14 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    if (this.x<500) {
+        this.x += (this.speed)*dt;
+        if(this.x>500) {
+            this.x = -300;
+        }
+    }
+    this.checkCollisions(player);
+    
 };
 
 // Draw the enemy on the screen, required method for game
@@ -29,6 +38,15 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.checkCollisions = function(player) {
+    if (player.x < this.x + 75 &&
+        player.x + 65 > this.x &&
+        player.y < this.y + 50 &&
+        70 + player.y > this.y) {
+        player.reset();
+    }
+
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -38,12 +56,6 @@ var Player = function(x,y){
     this.y = y;
     this.sprite = 'images/char-pink-girl.png';
 };
-
-Player.prototype.move = function() {
-
-};
-
-
 
 Player.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
@@ -59,10 +71,16 @@ Player.prototype.update = function(dt) {
     else if (this.x>400) {
         this.x = 400;
     }
-    else if (this.y <40) {
-        this.y =0;
+    else if (this.y <0) {
+        this.reset();
     }
     else if (this.y>400) {
+        this.y = 400;
+    }
+    else if (this.x===0 && this.y<40){
+        this.reset();
+    }
+    else if (this.x===0 && this.y>400){
         this.y = 400;
     }
 };
@@ -99,6 +117,19 @@ Player.prototype.handleInput = function(key){
         this.y += 40;
     };
 };
+Player.prototype.reset = function() {
+    this.x = 200;
+    this.y = 380;
+}
+// Player.prototype.checkCollisions = function(){
+//     for (i=0; i< allEnemies.length; i++){
+//         if (this.x < allEnemies[i].x + 50 && this.x + 50 > allEnemies[i].x && this.y < allEnemies[i].y + 30 && this.y + 30 > allEnemies[i].y) {
+//             console.log("Deeecent");
+//             this.resetPlayer();
+//             allEnemies[i].bugReset();
+//             break;
+//     };
+// };
 
 // Player.prototype = Object.create(Enemy.prototype);
 
@@ -107,20 +138,12 @@ Player.prototype.handleInput = function(key){
 // Place the player object in a variable called player
 var allEnemies = [];
 
-// var enemy1 = new Enemy(0,60);
-// var enemy2 = new Enemy(0,150);
-// var enemy3 = new Enemy(0,240);
 for (var i=0; i<3; i++) {
-    allEnemies.push(new Enemy());
+    allEnemies.push(new Enemy((-100+i*50),(60+i*80),this.speed));
 }
-// allEnemies.push(enemy1);
-// allEnemies.push(enemy2);
-// allEnemies.push(enemy3);
-// enemy1.render();
-// enemy1.move();
 
 var player = new Player(200,380);
-// player.move();
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
