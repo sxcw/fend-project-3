@@ -4,9 +4,11 @@ var Enemy = function(x,y,speed) {
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    this.speed = function getRandom() {
-        return (Math.random())*200;
-    }();
+    this.speed = this.move();
+    // this.speed = function getRandom() {
+    //     return (Math.random())*200;
+    // }();
+
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -14,7 +16,7 @@ var Enemy = function(x,y,speed) {
 
 // Enemy move function
 Enemy.prototype.move = function(){
-    this.x+this.speed;
+    return (Math.random())*200;
 };
 
 // Update the enemy's position, required method for game
@@ -43,6 +45,14 @@ Enemy.prototype.checkCollisions = function(player) {
         player.x + 65 > this.x &&
         player.y < this.y + 50 &&
         70 + player.y > this.y) {
+        if (player.lives <= 0) {
+            player.lives = 0;
+        }
+        else {
+            player.lives -= 1;
+        }
+        
+        document.getElementById("lives").innerHTML = "Lives: "+ player.lives;       
         player.reset();
     }
 
@@ -54,6 +64,7 @@ Enemy.prototype.checkCollisions = function(player) {
 var Player = function(x,y){
     this.x = x;
     this.y = y;
+    this.lives = 3;
     this.sprite = 'images/char-pink-girl.png';
 };
 
@@ -65,23 +76,23 @@ Player.prototype.update = function(dt) {
     this.x * (dt);
     this.y * (dt);
 
-    if (this.x <40){
-        this.x = 0;
+    if (this.x < 40 || this.x > 400) {
+        if(this.x < 40){
+            this.x = 0;
+        }
+        else{
+            this.x = 400;
+        }
     }
-    else if (this.x>400) {
-        this.x = 400;
-    }
-    else if (this.y <0) {
-        this.reset();
-    }
-    else if (this.y>400) {
-        this.y = 400;
-    }
-    else if (this.x===0 && this.y<40){
-        this.reset();
-    }
-    else if (this.x===0 && this.y>400){
-        this.y = 400;
+    if (this.y < 0 || this.y > 400) {
+        if(this.y < 0){
+            this.reset();
+            // this.score += 1;
+            // document.getElementById("score").innerHTML = "Score: "+ this.score;
+        }
+        else{
+            this.y = 400;
+        }
     }
 };
 
