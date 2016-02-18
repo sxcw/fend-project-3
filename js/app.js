@@ -22,10 +22,12 @@ var Enemy = function(x,y,speed) {
     
 };
 
-// Enemy move function
+
+// Enemy get a random number function
 Enemy.prototype.getRandom = function(){
-    return Math.floor((Math.random()+0.3)*300);
+    return Math.floor((Math.random()+0.3)*30);
 };
+
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -65,20 +67,25 @@ Enemy.prototype.checkCollisions = function(player) {
         player.x + 65 > this.x &&
         player.y < this.y + 50 &&
         70 + player.y > this.y) {
+        player.sprite = 'images/char-pink-girl-ouch.png';
         if (player.lives <= 1) {
             player.lives = 0;
             alert ("You lost all your lives...");
             player.lives = 3;
+            player.goldCount = 0;
+            
         }
         else {
             player.lives -= 1;
         }
+        document.getElementById("gold").innerHTML = "Gold: "+ player.goldCount;          
+        document.getElementById("lives").innerHTML = "Lives: "+ player.lives;
         
-        document.getElementById("lives").innerHTML = "Lives: "+ player.lives;       
-        player.reset();
+        window.setTimeout(player.reset(), 4000);
     }
 
 };
+
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -87,6 +94,7 @@ var Player = function(x,y){
     this.x = x;
     this.y = y;
     this.lives = 3;
+    this.goldCount = 0;
     this.sprite = 'images/char-pink-girl.png';
 };
 
@@ -106,37 +114,32 @@ Player.prototype.update = function(dt) {
             this.x = 400;
         }
     }
-    if (this.y < 0 || this.y > 400) {
-        if(this.y < 0){
+    if (this.y < -20 || this.y > 430) {
+        if(this.y < -20){
             this.reset();
-            // this.score += 1;
-            // document.getElementById("score").innerHTML = "Score: "+ this.score;
         }
         else{
-            this.y = 400;
+            this.y = 430;
         }
     }
+    if (this.x <= 120) {
+        if(this.y >70 && this.y<170) {
+           this.reset();
+
+        }
+    };
+    if (this.x >=280) {
+        if(this.y >70 && this.y<170) {
+           this.reset();
+        }
+    };
 };
 
 // Draw the enemy on the screen, required method for game
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-Player.prototype.handleInput = function(key){
-    // switch (key){
-    //     case 'left':
-    //         this.x = this.x-40;
-    //         break;
-    //     case 'right':
-    //         this.x = this.x + 40;
-    //          break;
-    //     case 'up':
-    //         this.y = this.y - 40;
-    //         break;
-    //     case 'down':
-    //         this.y = this.y + 40;
-    //         break;
-    // };   
+Player.prototype.handleInput = function(key){ 
     if (key === 'left') {
         this.x-= 40;
     }
@@ -152,30 +155,71 @@ Player.prototype.handleInput = function(key){
 };
 Player.prototype.reset = function() {
     this.x = 200;
-    this.y = 380;
+    this.y = 430;
+    // this.sprite = 'images/char-pink-girl.png';
 }
-// Player.prototype.checkCollisions = function(){
-//     for (i=0; i< allEnemies.length; i++){
-//         if (this.x < allEnemies[i].x + 50 && this.x + 50 > allEnemies[i].x && this.y < allEnemies[i].y + 30 && this.y + 30 > allEnemies[i].y) {
-//             console.log("Deeecent");
-//             this.resetPlayer();
-//             allEnemies[i].bugReset();
-//             break;
-//     };
-// };
+
+var Gold = function(x,y) {
+    this.x = x;
+    this.y = y;
+    this.sprite = 'images/Gold2.png';
+};
+// Gold.prototype.getRandom = function(){
+//     return Math.floor((Math.random()*500 + 100));
+// }
+Gold.prototype.update = function(dt) {
+    this.x* (dt);
+    this.y* (dt);
+    this.checkCollisions(player);
+
+};
+Gold.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+Gold.prototype.checkCollisions = function(player) {
+    if (player.x < this.x + 75 &&
+        player.x + 65 > this.x &&
+        player.y < this.y + 50 &&
+        70 + player.y > this.y && this.sprite == 'images/Gold2.png') {
+            
+        player.goldCount +=1;
+        document.getElementById("gold").innerHTML = "Gold: "+ player.goldCount;          
+        this.sprite = 'images/Rock2.png';
+        player.reset();
+
+        if (player.goldCount == 5){  
+        // setTimeout(alert("You collected all the gold, good job!"),6000);
+            player.goldCount = 0;
+        }
+    }        
+        
+};
+Gold.prototype.reset = function(){
+    this.sprite = 'images/Gold2.png';
+};
 
 // Player.prototype = Object.create(Enemy.prototype);
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [];
+// var allEnemies = [];
 
-for (var i=0; i<4; i++) {
-    allEnemies.push(new Enemy((-200+i*30),(60+i*80),this.speed));
-}
+// for (var i=0; i<4; i++) {
+//     allEnemies.push(new Enemy((-200+i*30),(60+i*80),this.speed));
+// };
+var enemy1 = new Enemy (-200, 60, this.speed);
+var enemy2 = new Enemy (-170,230, this.speed);
+var enemy3 = new Enemy (-140,310, this.speed);
+var enemy4 = new Enemy (250, 0, this.speed);
+var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 
 var player = new Player(200,380);
+
+var allGold = [];
+for (var i=0; i<5; i++){
+    allGold.push(new Gold(100*i+15, 15));
+};
 
 
 // This listens for key presses and sends the keys to your

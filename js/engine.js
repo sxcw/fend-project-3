@@ -98,6 +98,9 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+        allGold.forEach(function(gold){
+            gold.update(dt);
+        });
         player.update();
     }
 
@@ -112,9 +115,9 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
+                'images/stone-block.png',   // Top row is stone
                 'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
+                'images/water-block.png',   // water
                 'images/stone-block.png',   // Row 3 of 3 of stone
                 'images/stone-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
@@ -137,9 +140,11 @@ var Engine = (function(global) {
                  * we're using them over and over.
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                
             }
         }
-
+        var waterBlock = 'images/stone-block.png';
+        ctx.drawImage(Resources.get(waterBlock),202,150);
         renderEntities();
     }
 
@@ -151,10 +156,14 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        allGold.forEach(function(gold) {
+            gold.render();
+        });
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
+    
         player.render();
     }
 
@@ -172,13 +181,17 @@ var Engine = (function(global) {
      */
     Resources.load([
         'images/stone-block.png',
+        'images/stone-block-water.png',
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/enemy-bug2.png',
         'images/Rock.png',
+        'images/Gold2.png',
+        'images/Rock2.png',
         'images/char-boy.png',
-        'images/char-pink-girl.png'
+        'images/char-pink-girl.png',
+        'images/char-pink-girl-ouch.png'
     ]);
     Resources.onReady(init);
 
