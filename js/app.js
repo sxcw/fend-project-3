@@ -4,19 +4,27 @@ var Enemy = function(x,y,speed) {
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    this.speed = this.move();
+    this.speed = this.getRandom();
     // this.speed = function getRandom() {
     //     return (Math.random())*200;
     // }();
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+    if (this.speed % 2 === 0) {
+        this.sprite = 'images/enemy-bug.png';
+        this.direction = "right";
+    }
+    else {
+        this.sprite = 'images/enemy-bug2.png';
+        this.direction = "left";
+    }
+    
 };
 
 // Enemy move function
-Enemy.prototype.move = function(){
-    return (Math.random())*200;
+Enemy.prototype.getRandom = function(){
+    return Math.floor((Math.random()+0.3)*300);
 };
 
 // Update the enemy's position, required method for game
@@ -25,10 +33,22 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if (this.x<500) {
+    // if (this.x<500) {
+    //     this.x += (this.speed)*dt;
+    //     if(this.x>500) {
+    //         this.x = -300;
+    //     }
+    // }
+    if (this.x<500 && this.direction == "right") {
         this.x += (this.speed)*dt;
         if(this.x>500) {
             this.x = -300;
+        }
+    }
+    if (this.x>-250 && this.direction == "left") {
+        this.x -= (this.speed)*dt;
+        if(this.x<-250) {
+            this.x = 600;
         }
     }
     this.checkCollisions(player);
@@ -45,8 +65,10 @@ Enemy.prototype.checkCollisions = function(player) {
         player.x + 65 > this.x &&
         player.y < this.y + 50 &&
         70 + player.y > this.y) {
-        if (player.lives <= 0) {
+        if (player.lives <= 1) {
             player.lives = 0;
+            alert ("You lost all your lives...");
+            player.lives = 3;
         }
         else {
             player.lives -= 1;
@@ -149,8 +171,8 @@ Player.prototype.reset = function() {
 // Place the player object in a variable called player
 var allEnemies = [];
 
-for (var i=0; i<3; i++) {
-    allEnemies.push(new Enemy((-100+i*50),(60+i*80),this.speed));
+for (var i=0; i<4; i++) {
+    allEnemies.push(new Enemy((-200+i*30),(60+i*80),this.speed));
 }
 
 var player = new Player(200,380);
@@ -168,3 +190,4 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
