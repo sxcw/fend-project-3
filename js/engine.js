@@ -81,10 +81,6 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         // checkCollisions();
-        // checkCollisions(allEnemies,player);
-        // allEnemies.forEach(function(enemy)){
-        //     enemy.update(player);
-        // }
     }
 
     /* This is called by the update function and loops through all of the
@@ -116,11 +112,11 @@ var Engine = (function(global) {
          */
         var rowImages = [
                 'images/stone-block.png',   // Top row is stone
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/water-block.png',   // water
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/stone-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/stone-block.png',   // Second row is stone
+                'images/water-block.png',   // Third row is water 
+                'images/stone-block.png',   // Fourth row is stone
+                'images/stone-block.png',   // Fifth row is stone
+                'images/grass-block.png'    // Last row is grass
             ],
             numRows = 6,
             numCols = 5,
@@ -143,6 +139,7 @@ var Engine = (function(global) {
                 
             }
         }
+        // Add a stone block on top of water
         var waterBlock = 'images/stone-block.png';
         ctx.drawImage(Resources.get(waterBlock),202,150);
         renderEntities();
@@ -159,11 +156,9 @@ var Engine = (function(global) {
         allGold.forEach(function(gold) {
             gold.render();
         });
-
         allEnemies.forEach(function(enemy) {
             enemy.render();
-        });
-    
+        });  
         player.render();
     }
 
@@ -181,7 +176,6 @@ var Engine = (function(global) {
      */
     Resources.load([
         'images/stone-block.png',
-        'images/stone-block-water.png',
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
@@ -189,7 +183,6 @@ var Engine = (function(global) {
         'images/Rock.png',
         'images/Gold2.png',
         'images/Rock2.png',
-        'images/char-boy.png',
         'images/char-pink-girl.png',
         'images/char-pink-girl-ouch.png'
     ]);

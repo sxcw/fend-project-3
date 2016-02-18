@@ -1,3 +1,10 @@
 body {
     text-align: center;
 }
+
+#lives, #gold{
+	display: inline-block;
+	width:300px;
+	font-family: 'Fjalla One', sans-serif;
+	font-size: 2em;
+}
