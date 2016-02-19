@@ -1,6 +1,11 @@
-frontend-nanodegree-arcade-game
+Arcade Game: Gold Girl
 ===============================
 
-Students should use this [rubric](https://www.udacity.com/course/viewer/#!/c-nd001/l-2696458597/m-2687128535) for self-checking their submission.
+#How to run the game
+* Clone the repo or download the zip file
+* Load index.html in your browser
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+#How to play the game
+* Use arrow keys to move player
+* Avoid bugs and get gold! 
+
