@@ -19,7 +19,7 @@
 
  // Get a random number
  Enemy.prototype.getRandom = function() {
-     return Math.floor((Math.random() + 0.3) * 30);
+     return Math.floor((Math.random() + 0.3) * 300);
  };
 
  // Update the enemy's position, required method for game
@@ -54,34 +54,29 @@
          player.x + 65 > this.x &&
          player.y < this.y + 50 &&
          70 + player.y > this.y) {
-        // If the player collides with a bug, showing the ouch girl sprite
+        // If the player collides with a bug, she becomes the "ouch" girl and loses a life 
          player.sprite = 'images/char-pink-girl-ouch.png';
+         player.lives -= 1;
          // If the player loses all her lives, show a delayed alert and do the followings:
-         if (player.lives <= 1) {
+         if (player.lives < 1) {
              player.lives = 0;             
             function slowAlert(){
                 alert("You lost all your lives...");
-                // Reset gold, sprite and lives
-                player.goldCount = 0;
-                document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
+                // Reset sprite and lives and gold
                 player.sprite = 'images/char-pink-girl.png';
                 player.lives = 2;
                 document.getElementById("lives").innerHTML = "Lives: " + player.lives;
-                for (var i = 0; i < 5; i++) {
-                    allGold.push(new Gold(100 * i + 15, 15));}
+                Gold.prototype.reset();
             }
              window.setTimeout(slowAlert,1000);
-         }
-         // If the player still has 1 life left 
-         else {
-             player.lives -= 1;
-         }
+         }         
          // Update lives and gold number, reset player position
          document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
          document.getElementById("lives").innerHTML = "Lives: " + player.lives;
          player.reset();
      }
  };
+
 
  // Player consctructor 
  var Player = function(x, y) {
@@ -113,7 +108,7 @@
          if (this.y > 70 && this.y < 170) {
              this.reset();
          }
-     };
+     }
      if (this.x >= 280) {
          if (this.y > 70 && this.y < 170) {
              this.reset();
@@ -166,7 +161,7 @@
      if (player.x < this.x + 55 &&
          player.x + 45 > this.x &&
          player.y < this.y + 30 &&
-         50 + player.y > this.y && this.sprite == 'images/Gold2.png') {
+         50 + player.y > this.y && this.sprite === 'images/Gold2.png') {
         // Add 1 to goldCount and display the updated number
         // Gold will turn to rock after touch, and rock is no longer collectable
          player.goldCount += 1;
@@ -181,13 +176,8 @@
                 // Make sure player has 2 lives and display the number
                 player.lives = 2;
                 document.getElementById("lives").innerHTML = "Lives: " + player.lives;
-                // Reset goldCount back to 0 and display the number
-                player.goldCount = 0;
-                document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
-                // Reinit the gold objects
-                // for (var i = 0; i < 5; i++) {
-                //     allGold.push(new Gold(100 * i + 15, 15));
-                // }
+                // Reset gold
+                Gold.prototype.reset();
             }
             window.setTimeout(slowAlert,1000);
          }
@@ -196,10 +186,16 @@
      }
  };
 
- // Gold.prototype.reset = function() {
- //     this.sprite = 'images/Gold2.png';
- //     console.log("gold.prototype.reset now");
- // };
+ // Reset goldCount back to 0 and display the number, reinit gold
+  Gold.prototype.reset = function() {
+    player.goldCount = 0;
+    document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
+    // Reinit the gold objects
+    allGold = [];
+    for (var i = 0; i < 5; i++) {
+        allGold.push(new Gold(100 * i + 15, 15));
+    }
+ };
 
  // Now instantiate 
  // Place all enemy objects in an array called allEnemies
