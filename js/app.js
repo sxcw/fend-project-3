@@ -1,5 +1,6 @@
  "use strict";
- // Enemies our player must avoid
+
+ // Enemy constructor
  var Enemy = function(x, y, speed) {
      this.x = x;
      this.y = y;
@@ -9,7 +10,8 @@
      if (this.speed % 2 === 0) {
          this.sprite = 'images/enemy-bug.png';
          this.direction = "right";
-     } else {
+     }
+     else {
          this.sprite = 'images/enemy-bug2.png';
          this.direction = "left";
      }
@@ -20,74 +22,79 @@
      return Math.floor((Math.random() + 0.3) * 30);
  };
 
-
  // Update the enemy's position, required method for game
  // Parameter: dt, a time delta between ticks
  Enemy.prototype.update = function(dt) {
      // Multiply any movement by the dt parameter
      // which will ensure the game runs at the same speed for
      // all computers.
-     if (this.x < 500 && this.direction == "right") {
+     if (this.x < 500 && this.direction === "right") {
          this.x += (this.speed) * dt;
          if (this.x > 500) {
              this.x = -300;
          }
      }
-     if (this.x > -250 && this.direction == "left") {
+     if (this.x > -250 && this.direction === "left") {
          this.x -= (this.speed) * dt;
          if (this.x < -250) {
              this.x = 600;
          }
      }
      this.checkCollisions(player);
-
  };
 
  // Draw the enemy on the screen, required method for game
  Enemy.prototype.render = function() {
      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
  };
+
 // Check collisions between player and enemy 
  Enemy.prototype.checkCollisions = function(player) {
      if (player.x < this.x + 75 &&
          player.x + 65 > this.x &&
          player.y < this.y + 50 &&
          70 + player.y > this.y) {
+        // If the player collides with a bug, showing the ouch girl sprite
          player.sprite = 'images/char-pink-girl-ouch.png';
+         // If the player loses all her lives, show a delayed alert and do the followings:
          if (player.lives <= 1) {
-             player.lives = 0;
-             alert("You lost all your lives...");
-             player.lives = 3;
-             player.goldCount = 0;
-
-         } else {
+             player.lives = 0;             
+            function slowAlert(){
+                alert("You lost all your lives...");
+                // Reset gold, sprite and lives
+                player.goldCount = 0;
+                document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
+                player.sprite = 'images/char-pink-girl.png';
+                player.lives = 2;
+                document.getElementById("lives").innerHTML = "Lives: " + player.lives;
+                for (var i = 0; i < 5; i++) {
+                    allGold.push(new Gold(100 * i + 15, 15));}
+            }
+             window.setTimeout(slowAlert,1000);
+         }
+         // If the player still has 1 life left 
+         else {
              player.lives -= 1;
          }
+         // Update lives and gold number, reset player position
          document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
          document.getElementById("lives").innerHTML = "Lives: " + player.lives;
-
-         setTimeout(player.reset(), 4000);
+         player.reset();
      }
-
  };
 
-
- // Player Class
+ // Player consctructor 
  var Player = function(x, y) {
      this.x = x;
      this.y = y;
-     this.lives = 3;
+     this.lives = 2;
      this.goldCount = 0;
      this.sprite = 'images/char-pink-girl.png';
  };
 
- Player.prototype.update = function(dt) {
-     // Multiply any movement by the dt parameter
-     // which will ensure the game runs at the same speed for
-     // all computers.
-     this.x * (dt);
-     this.y * (dt);
-
+ // Update the player's position, required method for game
+ // Set player's boundary 
+ Player.prototype.update = function() {
      if (this.x < 40 || this.x > 400) {
          if (this.x < 40) {
              this.x = 0;
@@ -95,132 +102,121 @@
              this.x = 400;
          }
      }
-     if (this.y < -20 || this.y > 430) {
-         if (this.y < -20) {
+     if (this.y < -10 || this.y > 435) {
+         if (this.y < -10) {
              this.reset();
          } else {
-             this.y = 430;
+             this.y = 435;
          }
      }
      if (this.x <= 120) {
          if (this.y > 70 && this.y < 170) {
              this.reset();
-
          }
      };
      if (this.x >= 280) {
          if (this.y > 70 && this.y < 170) {
              this.reset();
          }
-     };
+     }
  };
 
  // Draw the enemy on the screen, required method for game
  Player.prototype.render = function() {
      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
  };
+ // Handle user input: if user presses down the left arrow key, the player will move 40px to the left
  Player.prototype.handleInput = function(key) {
-    //  if this.goldCount > 3{
-    //     if (key === 'left') {
-    //      this.x -= 20; }
-    //     else if (key === 'right') {
-    //      this.x += 20;} 
-    //     else if (key === 'up') {
-    //      this.y -= 20;}
-    //     else {
-    //      this.y += 20;
-    //     };
-    // };
-    //  else {
-    //     if (key === 'left') {
-    //      this.x -= 40; }
-    //     else if (key === 'right') {
-    //      this.x += 40;} 
-    //     else if (key === 'up') {
-    //      this.y -= 40;}
-    //     else {
-    //      this.y += 40;
-    //     };
-    // };
-     
      if (key === 'left') {
-         this.x -= 20;
+         this.x -= 40;
      } else if (key === 'right') {
-         this.x += 20;
+         this.x += 40;
      } else if (key === 'up') {
-         this.y -= 20;
+         this.y -= 40;
      } else {
-         this.y += 20;
-     };
+         this.y += 40;
+     }
  };
 
  // Reset player to original position
  Player.prototype.reset = function() {
      this.x = 200;
      this.y = 430;
-     //this.sprite = 'images/char-pink-girl.png';
- }
+ };
 
-
-// Gold Class and its functions
+// Gold conscructor
  var Gold = function(x, y) {
      this.x = x;
      this.y = y;
      this.sprite = 'images/Gold2.png';
  };
 
- Gold.prototype.update = function(dt) {
-     this.x * (dt);
-     this.y * (dt);
+// Update the gold's position, required method for game
+ Gold.prototype.update = function() {
      this.checkCollisions(player);
  };
 
+ // Draw the enemy on the screen, required method for game
  Gold.prototype.render = function() {
      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
  };
 
+// If player collides with gold objects, do the followings: 
  Gold.prototype.checkCollisions = function(player) {
-     if (player.x < this.x + 75 &&
-         player.x + 65 > this.x &&
-         player.y < this.y + 50 &&
-         70 + player.y > this.y && this.sprite == 'images/Gold2.png') {
+     if (player.x < this.x + 55 &&
+         player.x + 45 > this.x &&
+         player.y < this.y + 30 &&
+         50 + player.y > this.y && this.sprite == 'images/Gold2.png') {
+        // Add 1 to goldCount and display the updated number
+        // Gold will turn to rock after touch, and rock is no longer collectable
          player.goldCount += 1;
          document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
          this.sprite = 'images/Rock2.png';
-         player.reset();
-
-         if (player.goldCount == 5) {
-             setTimeout(alert("You collected all the gold, good job!"),6000);
-             player.goldCount = 0;
+         // If player collects all the gold objects, show a delayed alert and do the followings:
+         if (player.goldCount === 5) {
+            function slowAlert(){
+                alert("You collected all the gold, good job!");
+                // Make sure the player sprite resets to the neutral face
+                player.sprite = 'images/char-pink-girl.png';
+                // Make sure player has 2 lives and display the number
+                player.lives = 2;
+                document.getElementById("lives").innerHTML = "Lives: " + player.lives;
+                // Reset goldCount back to 0 and display the number
+                player.goldCount = 0;
+                document.getElementById("gold").innerHTML = "Gold: " + player.goldCount;
+                // Reinit the gold objects
+                // for (var i = 0; i < 5; i++) {
+                //     allGold.push(new Gold(100 * i + 15, 15));
+                // }
+            }
+            window.setTimeout(slowAlert,1000);
          }
+         // Reset player position after she collides with gold
+         player.reset();
      }
-
- };
- Gold.prototype.reset = function() {
-     this.sprite = 'images/Gold2.png';
  };
 
+ // Gold.prototype.reset = function() {
+ //     this.sprite = 'images/Gold2.png';
+ //     console.log("gold.prototype.reset now");
+ // };
 
  // Now instantiate 
  // Place all enemy objects in an array called allEnemies
  // Place the player object in a variable called player
-
- // for (var i=0; i<4; i++) {
- //     allEnemies.push(new Enemy((-200+i*30),(60+i*80),this.speed));
- // };
+ // Place all gold objects in an array called allGold
  var enemy1 = new Enemy(-200, 60, this.speed);
  var enemy2 = new Enemy(-170, 230, this.speed);
  var enemy3 = new Enemy(-140, 310, this.speed);
  var enemy4 = new Enemy(250, -20, this.speed);
  var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 
- var player = new Player(200, 380);
+ var player = new Player(200, 430);
 
  var allGold = [];
  for (var i = 0; i < 5; i++) {
      allGold.push(new Gold(100 * i + 15, 15));
- };
-
+ }
 
  // This listens for key presses and sends the keys to your
  // Player.handleInput() method.
